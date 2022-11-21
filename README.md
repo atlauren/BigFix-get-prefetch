@@ -1,6 +1,6 @@
 # BigFix
 
-This repo contains templates and helpers for use with HCL BigFix.  (BigFix is formerly of IBM, formerly of BigFix, Inc, née IBM Entpoint Manager, née Tivoli Endpoint Manager.)
+This repo contains templates and helpers for use with HCL BigFix.  (BigFix is formerly of IBM, formerly of BigFix, Inc, née IBM Endpoint Manager, née Tivoli Endpoint Manager.)
 
 You might find me on these BigFix-oriented social media things:
 * [BigFix Forum](https://forum.bigfix.com/)
