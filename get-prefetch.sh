@@ -7,6 +7,7 @@
 # atlauren@uci.edu
 # 2011-11-21 First publish
 #
+# https://github.com/atlauren/bigfix/get-prefetch.sh
 # 
 
 doHelp () {

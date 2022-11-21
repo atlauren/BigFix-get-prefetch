@@ -7,7 +7,7 @@
     The script accepts a \path\to\file as input parameter. Wild cards are permitted. The script returns the file(s) filename, size, and sha1 hash. These are useful when building BigFix prefetch blocks.
 
     .PARAMETER Path
-    Enter a \path\to\file on the command line.
+    Enter \path\to\file on the command line.
 
     .EXAMPLE 
     
@@ -25,11 +25,12 @@
       TheSize: 123
       TheSha : [sha1 hash1]
     *** \path\to\file2 ***
-      TheName: file
+      TheName: file2
       TheSize: 456
       TheSha : [sha1 hash2]
 
-
+	.LINK
+	https://github.com/atlauren/bigfix/get-prefetch.ps1
 
     .NOTES
     atlauren@uci.edu
