@@ -4,7 +4,7 @@
     This PowerShell script is "get-prefetch.ps1". It provides filename, size, and sha1.
 
     .DESCRIPTION
-    The script accepts a \path\to\file as input parameter. Wild cards are permitted. The script returns the file(s) filename, size, and sha1 hash. These are useful when building BigFix prefetch blocks.
+    The script accepts a \path\to\file as input parameter. Wildcards are permitted. The script returns the file(s) filename, size, and sha1 hash. These are useful when building BigFix prefetch blocks.
 
     .PARAMETER Path
     Enter \path\to\file on the command line.
