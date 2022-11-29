@@ -45,7 +45,7 @@ Param (
 		Position=0,
 		HelpMessage="Enter the \path\to\file.")]
 	[ValidateScript(
-		{ Test-Path $_ -PathType 'Leaf' -IsValid }
+		{ Test-Path $_ -PathType 'Leaf' }
         )]
 	[string[]]$Path
 
