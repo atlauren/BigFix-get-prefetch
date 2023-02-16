@@ -25,7 +25,7 @@ fi
 for file in $files
 do
 
-	if [[ -f file ]]; then
+	if [[ -f $file ]]; then
 
 		theName=$( basename $(stat -f %N $file) )
 		theSize=$( stat -f %z $file )
