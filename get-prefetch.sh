@@ -35,6 +35,10 @@ do
 		echo "  theName = $theName"
 		echo "  theSize = $theSize"
 		echo "  theSha  = $theSha"
+		echo "  ** PARAMETERS **"
+		echo -e '\t'"parameter \"theFile\" = \"$theName\""
+		echo -e '\t'"parameter \"theSha1\" = \"$theSha\""
+		echo -e '\t'"parameter \"theSize\" = \"$theSize\""
 
 	else 
 	
