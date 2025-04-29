@@ -66,8 +66,8 @@ echo "  theName = $theName"
 echo "  theSize = $theSize"
 echo "  theSha  = $theSha"
 echo "  ** PARAMETERS **"
-echo "`tparameter `"theFile`" = `"$theName"
-echo "`tparameter `"theSha1`" = `"$theSha"
-echo "`tparameter `"theSize`" = `"$theSize"
+echo "`tparameter `"theFile`" = `"$theName`""
+echo "`tparameter `"theSha1`" = `"$theSha`""
+echo "`tparameter `"theSize`" = `"$theSize`""
 
 } 
