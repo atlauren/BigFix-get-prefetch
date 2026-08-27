@@ -9,6 +9,9 @@
     .PARAMETER Path
     Enter \path\to\file on the command line.
 
+    .PARAMETER Basic
+    Output basic info (default).
+
     .PARAMETER Params
     Output the BigFix parameter block.
 
@@ -16,12 +19,13 @@
     Output a JSON blob.
 
     .PARAMETER All
-    Output all formats.
+    Output all sections.
 
     .EXAMPLE 
     
     PS> get-prefetch.ps1 \path\to\file
     *** file ***
+      ** BASIC **
       theName = file
       theSize = 123
       theSha  = [sha1 hash]
@@ -44,7 +48,7 @@
     atlauren@uci.edu
     2022-11-21 First publish
     2025-04-28 add parameter-formatted output
-    2026-08-27 separate output sections by switch; add -All
+    2026-08-27 separate output sections by switch; theName always output
 
 #>
 
@@ -59,14 +63,16 @@ Param (
         )]
     [string[]]$Path,
 
+    [switch]$Basic,
     [switch]$Params,
     [switch]$Json,
     [switch]$All
 
 )
 
-# determine output mode; default is basic
+# determine output mode; basic is default
 $outputMode = "basic"
+if ($Basic)  { $outputMode = "basic" }
 if ($Params) { $outputMode = "params" }
 if ($Json)   { $outputMode = "json" }
 if ($All)    { $outputMode = "all" }
@@ -80,15 +86,17 @@ foreach ($file in $theFiles) {
     $theHash = (Get-FileHash -Algorithm SHA1 -Path $file)
     $theSha = $theHash.Hash
 
+    # theName is always output
+    echo "*** $theName ***"
+
     if ($outputMode -eq "basic" -or $outputMode -eq "all") {
-        echo "*** $theName ***"
+        echo "  ** BASIC **"
         echo "  theName = $theName"
         echo "  theSize = $theSize"
         echo "  theSha  = $theSha"
     }
 
     if ($outputMode -eq "params" -or $outputMode -eq "all") {
-        echo "*** $theName ***"
         echo "  ** PARAMETERS **"
         echo "`tparameter `"theFile`" = `"$theName`""
         echo "`tparameter `"theSha1`" = `"$theSha`""
@@ -96,7 +104,6 @@ foreach ($file in $theFiles) {
     }
 
     if ($outputMode -eq "json" -or $outputMode -eq "all") {
-        echo "*** $theName ***"
         echo "  ** JSON **"
         echo "  {"
         echo "    `"filename`": `"$theName`","
