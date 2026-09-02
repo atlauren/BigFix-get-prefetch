@@ -21,6 +21,9 @@
     .PARAMETER All
     Output all sections.
 
+    .PARAMETER Clip
+    Also copy the content blocks (without the ** headers **) to the clipboard.
+
     .EXAMPLE 
     
     PS> get-prefetch.ps1 \path\to\file
@@ -49,6 +52,7 @@
     2022-11-21 First publish
     2025-04-28 add parameter-formatted output
     2026-08-27 separate output sections by switch; theName always output
+    2026-09-02 add -Clip to copy header-free content to the clipboard
 
 #>
 
@@ -66,7 +70,8 @@ Param (
     [switch]$Basic,
     [switch]$Params,
     [switch]$Json,
-    [switch]$All
+    [switch]$All,
+    [switch]$Clip
 
 )
 
@@ -76,6 +81,19 @@ if ($Basic)  { $outputMode = "basic" }
 if ($Params) { $outputMode = "params" }
 if ($Json)   { $outputMode = "json" }
 if ($All)    { $outputMode = "all" }
+
+$clipLines = @()
+
+# header line: never copied to the clipboard
+function hdr ($text) {
+    Write-Output $text
+}
+
+# content line: copied to the clipboard when -Clip is set
+function out ($text) {
+    Write-Output $text
+    if ($Clip) { $script:clipLines += $text }
+}
 
 $theFiles = (Get-ChildItem $Path)
 
@@ -87,29 +105,34 @@ foreach ($file in $theFiles) {
     $theSha = $theHash.Hash
 
     # theName is always output
-    echo "*** $theName ***"
+    hdr "*** $theName ***"
 
     if ($outputMode -eq "basic" -or $outputMode -eq "all") {
-        echo "  ** BASIC **"
-        echo "  theName = $theName"
-        echo "  theSize = $theSize"
-        echo "  theSha  = $theSha"
+        hdr "  ** BASIC **"
+        out "  theName = $theName"
+        out "  theSize = $theSize"
+        out "  theSha  = $theSha"
     }
 
     if ($outputMode -eq "params" -or $outputMode -eq "all") {
-        echo "  ** PARAMETERS **"
-        echo "`tparameter `"theFile`" = `"$theName`""
-        echo "`tparameter `"theSha1`" = `"$theSha`""
-        echo "`tparameter `"theSize`" = `"$theSize`""
+        hdr "  ** PARAMETERS **"
+        out "`tparameter `"theFile`" = `"$theName`""
+        out "`tparameter `"theSha1`" = `"$theSha`""
+        out "`tparameter `"theSize`" = `"$theSize`""
+        out "`tparameter `"theFolder`" = `"{preceding text of last `".`" of following text of first `"_`" of (parameter `"theFile`")}`""
     }
 
     if ($outputMode -eq "json" -or $outputMode -eq "all") {
-        echo "  ** JSON **"
-        echo "  {"
-        echo "    `"filename`": `"$theName`","
-        echo "    `"size`": $theSize,"
-        echo "    `"sha1`": `"$theSha`""
-        echo "  }"
+        hdr "  ** JSON **"
+        out "  {"
+        out "    `"filename`": `"$theName`","
+        out "    `"size`": $theSize,"
+        out "    `"sha1`": `"$theSha`""
+        out "  }"
     }
 
+}
+
+if ($Clip) {
+    $clipLines -join [Environment]::NewLine | Set-Clipboard
 }

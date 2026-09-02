@@ -8,34 +8,50 @@
 # 2011-11-21 First publish
 # 2025-04-28 add parameter-formatted output
 # 2026-08-27 separate output sections by positional parameter; theName always output
+# 2026-09-02 add --clip to copy header-free content to the clipboard
 #
 # https://github.com/atlauren/bigfix/get-prefetch.sh
 # 
 
 doHelp () {
-    echo "usage: get-prefetch.sh [--basic|--params|--json|--all] /path/to/file*"
+    echo "usage: get-prefetch.sh [--basic|--params|--json|--all] [--clip] /path/to/file*"
     echo "  (theName is always output)"
     echo "  --basic   output basic info (default)"
     echo "  --params  output BigFix parameter block"
     echo "  --json    output JSON blob"
     echo "  --all     output all sections"
+    echo "  --clip    also copy the content blocks (no headers) to the clipboard"
 }
 
-# parse output mode flag; basic is default
+# parse flags; basic is default
 outputMode="basic"
-if [[ "$1" == "--basic" ]]; then
-    outputMode="basic"
+useClip="false"
+while [[ "$1" == --* ]]; do
+    case "$1" in
+        --basic)  outputMode="basic" ;;
+        --params) outputMode="params" ;;
+        --json)   outputMode="json" ;;
+        --all)    outputMode="all" ;;
+        --clip)   useClip="true" ;;
+        *)        doHelp; exit ;;
+    esac
     shift
-elif [[ "$1" == "--params" ]]; then
-    outputMode="params"
-    shift
-elif [[ "$1" == "--json" ]]; then
-    outputMode="json"
-    shift
-elif [[ "$1" == "--all" ]]; then
-    outputMode="all"
-    shift
-fi
+done
+
+clipBuffer=""
+
+# header line: never copied to the clipboard
+hdr () {
+    echo "$1"
+}
+
+# content line: copied to the clipboard when --clip is set
+out () {
+    echo -e "$1"
+    if [[ "$useClip" == "true" ]]; then
+        clipBuffer+="$( echo -e "$1" )"$'\n'
+    fi
+}
 
 #vars
 files="$@"
@@ -55,29 +71,30 @@ do
         theSha=$( shasum -a 1 $file | awk '{print $1}' )
 
         # theName is always output
-        echo "*** $theName ***"
+        hdr "*** $theName ***"
 
         if [[ "$outputMode" == "basic" || "$outputMode" == "all" ]]; then
-            echo "  ** BASIC **"
-            echo "  theName = $theName"
-            echo "  theSize = $theSize"
-            echo "  theSha  = $theSha"
+            hdr "  ** BASIC **"
+            out "  theName = $theName"
+            out "  theSize = $theSize"
+            out "  theSha  = $theSha"
         fi
 
         if [[ "$outputMode" == "params" || "$outputMode" == "all" ]]; then
-            echo "  ** PARAMETERS **"
-            echo -e '\t'"parameter \"theFile\" = \"$theName\""
-            echo -e '\t'"parameter \"theSha1\" = \"$theSha\""
-            echo -e '\t'"parameter \"theSize\" = \"$theSize\""
+            hdr "  ** PARAMETERS **"
+            out '\t'"parameter \"theFile\" = \"$theName\""
+            out '\t'"parameter \"theSha1\" = \"$theSha\""
+            out '\t'"parameter \"theSize\" = \"$theSize\""
+            out '\t'"parameter \"theFolder\" = \"{preceding text of last \".\" of following text of first \"_\" of (parameter \"theFile\")}\""
         fi
 
         if [[ "$outputMode" == "json" || "$outputMode" == "all" ]]; then
-            echo "  ** JSON **"
-            echo "  {"
-            echo "    \"filename\": \"$theName\","
-            echo "    \"size\": $theSize,"
-            echo "    \"sha1\": \"$theSha\""
-            echo "  }"
+            hdr "  ** JSON **"
+            out "  {"
+            out "    \"filename\": \"$theName\","
+            out "    \"size\": $theSize,"
+            out "    \"sha1\": \"$theSha\""
+            out "  }"
         fi
 
     else 
@@ -88,3 +105,7 @@ do
     fi
 
 done
+
+if [[ "$useClip" == "true" ]]; then
+    printf '%s' "$clipBuffer" | pbcopy
+fi
