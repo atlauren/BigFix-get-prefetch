@@ -92,7 +92,7 @@ do
             hdr "  ** JSON **"
             out "  {"
             out "    \"filename\": \"$theName\","
-            out "    \"size\": $theSize,"
+            out "    \"size\": \"$theSize\","
             out "    \"sha1\": \"$theSha\""
             out "  }"
         fi

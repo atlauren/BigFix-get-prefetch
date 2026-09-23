@@ -40,7 +40,7 @@
       ** JSON **
       {
         "filename": "file",
-        "size": 123,
+        "size": "123",
         "sha1": "[sha1 hash]"
       }
 
@@ -126,7 +126,7 @@ foreach ($file in $theFiles) {
         hdr "  ** JSON **"
         out "  {"
         out "    `"filename`": `"$theName`","
-        out "    `"size`": $theSize,"
+        out "    `"size`": `"$theSize`","
         out "    `"sha1`": `"$theSha`""
         out "  }"
     }
